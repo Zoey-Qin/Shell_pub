@@ -31,10 +31,11 @@ package="NeutonOS-installer-NeutonOS_3.0.000.0.$(date +%y%m%d)-x86_64-neutonos8.
 sha_value=$(sha256sum "$package" | awk '{print $1}')
 matching_line=$(grep "$sha_value" sha256sum.txt | grep "$package")
 if [ -n "$matching_line" ]; then
-    echo "校验通过: $matching_line"
+    echo "Verification passed: $matching_line"
 else
-    echo "校验失败"
+    echo "Verification failed"
     exit 1
+fi
 fi
 
 # exit folder
