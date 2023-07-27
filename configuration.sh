@@ -8,8 +8,7 @@ if [ ! -d "/opt/sddc" ] && [ ! -d "/opt/sds" ]; then
     #check if directory with current date exists
     if [ ! -d "$date" ]; then
 	echo "The directory $date does not exist"
-	exit 1
-   
+	exit 1   
     else
     	#enter directory with current date
     	cd "$date"
