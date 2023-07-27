@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+    stages {
+        stage('hello'){
+            steps {
+                echo "Start"
+            }
+        }
+        stage('download'){
+            steps{
+              sh 'cd /xhere && sh download.sh'
+            }
+        }
+        stage('clean'){
+            steps {
+               sh 'cd /xhere && expect clean.sh'
+            }
+        }
+        stage('configuration'){
+            steps {
+               sh 'cd /xhere && sh configuration.sh'
+            }
+        }
+        stage('install'){
+            steps {
+               sh 'cd /xhere && expect install.sh'
+            }
+        }
+        stage('over'){
+            steps {
+               echo 'over'
+            }
+        }
+    }
+    post {
+        failure {
+            emailext (
+                subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
+                body: "Pipeline ${currentBuild.fullDisplayName} 失败，请检查日志。",
+                to: 'qin.sa@xsky.com'
+            )
+        }
+        
+        success {
+            emailext (
+                subject: "Pipeline Successful: ${currentBuild.fullDisplayName}",
+                body: "Pipeline ${currentBuild.fullDisplayName} 成功执行。",
+                to: 'qin.sa@xsky.com'
+            )
+        }
+        
+        unstable {
+            emailext (
+                subject: "Pipeline Unstable: ${currentBuild.fullDisplayName}",
+                body: "Pipeline ${currentBuild.fullDisplayName} 处于不稳定状态，请检查日志。",
+                to: 'qin.sa@xsky.com'
+            )
+        }
+        
+        always {
+            script {
+                def stageDuration = currentBuild.getDurationString().replaceAll("[^\\d]", "")
+                if (stageDuration.toInteger() > 600) {
+                    emailext (
+                        subject: "Pipeline Stage Timeout: ${currentBuild.fullDisplayName}",
+                        body: "Pipeline ${currentBuild.fullDisplayName} 的某个阶段执行超时，请检查日志。",
+                        to: 'qin.sa@xsky.com'
+                    )
+                }
+            }
+        }
+    }
+}
