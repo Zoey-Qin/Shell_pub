@@ -3,10 +3,8 @@
 # 获取并转到当前日期文件夹
 set date [exec date +%m-%d]
 cd "${date}"
-
 # 进行安装
 spawn ./bootstrap.sh
-
 # 检测是否出现等待服务创建的提示
 while true {
   expect {
